@@ -9,6 +9,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,12 @@ public class Config
 
     private static boolean validateItemName(final Object obj)
     {
-        return obj instanceof final String itemName && ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
+        if (!(obj instanceof final String itemName)) {
+            return false;
+        }
+
+        ResourceLocation itemId = ResourceLocation.tryParse(itemName);
+        return itemId != null && ForgeRegistries.ITEMS.containsKey(itemId);
     }
 
     @SubscribeEvent
@@ -57,7 +63,10 @@ public class Config
 
         // convert the list of strings into a set of items
         items = ITEM_STRINGS.get().stream()
-                .map(itemName -> ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName)))
+                .map(ResourceLocation::tryParse)
+                .filter(Objects::nonNull)
+                .map(ForgeRegistries.ITEMS::getValue)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 }

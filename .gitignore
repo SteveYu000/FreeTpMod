@@ -1,3 +1,38 @@
-# Gradle build state and outputs
-.gradle/
-build/
+# Gradle caches and build outputs
+/.gradle/
+/build/
+/bin/
+/out/
+
+# IDE metadata
+/.idea/
+/.vscode/
+/.settings/
+/.classpath
+/.project
+*.iml
+*.ipr
+*.iws
+
+# Forge/Minecraft development runtime data
+/run/
+/runs/
+/eclipse/
+/logs/
+/crash-reports/
+
+# Java/JVM-generated files
+*.class
+*.hprof
+hs_err_pid*.log
+replay_pid*.log
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
