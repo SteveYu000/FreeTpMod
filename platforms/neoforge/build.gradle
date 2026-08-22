@@ -26,7 +26,15 @@ base {
 sourceSets.main.java.srcDir("src/command-${command_api}/java")
 
 neoForge {
-    version = neo_version
+    if (Boolean.parseBoolean(project.findProperty('disable_recompilation') ?: 'false')) {
+        enable {
+            version = project.neo_version
+            disableRecompilation = true
+        }
+    }
+    else {
+        version = neo_version
+    }
 
     if (project.hasProperty('parchment_minecraft_version')) {
         parchment {
