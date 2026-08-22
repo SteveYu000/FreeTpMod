@@ -26,6 +26,11 @@ if (!targetPropertiesFile.isFile()) {
 
 def targetProperties = new Properties()
 targetPropertiesFile.withInputStream { targetProperties.load(it) }
+if (targetProperties.getProperty('forge_gradle_generation') != '7') {
+    throw new GradleException(
+            "Forge target ${selectedTarget} does not use ForgeGradle 7; run the build from the repository root"
+    )
+}
 targetProperties.each { propertyName, propertyValue ->
     project.ext.set(propertyName.toString(), propertyValue.toString())
 }

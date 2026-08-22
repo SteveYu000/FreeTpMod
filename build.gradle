@@ -14,9 +14,21 @@ if (!targetPropertiesFile.isFile()) {
 
 def targetProperties = new Properties()
 targetPropertiesFile.withInputStream { targetProperties.load(it) }
+if (targetProperties.getProperty('forge_gradle_generation', '6') != '6') {
+    throw new GradleException(
+            "Forge target ${selectedTarget} uses ForgeGradle 7; run the build in platforms/forge/gradle7"
+    )
+}
 targetProperties.each { propertyName, propertyValue ->
     project.ext.set(propertyName.toString(), propertyValue.toString())
 }
+
+def usesRuntimeOfficialMappings = Boolean.parseBoolean(
+        targetProperties.getProperty('runtime_official_mappings', 'false')
+)
+def usesStrictJoptSimple = Boolean.parseBoolean(
+        targetProperties.getProperty('strict_jopt_simple', 'false')
+)
 
 layout.buildDirectory.set(file("build/forge/${minecraft_version}"))
 
@@ -47,6 +59,10 @@ minecraft {
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: mapping_channel, version: mapping_version
+
+    if (usesRuntimeOfficialMappings) {
+        reobf = false
+    }
 
     // When true, this property will have all Eclipse/IntelliJ IDEA run configurations run the "prepareX" task for the given run configuration before launching the game.
     // In most cases, it is not necessary to enable.
@@ -146,6 +162,12 @@ dependencies {
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+    if (usesStrictJoptSimple) {
+        implementation('net.sf.jopt-simple:jopt-simple:5.0.4') {
+            version { strictly '5.0.4' }
+        }
+    }
+
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
@@ -197,7 +219,9 @@ tasks.named('jar', Jar).configure {
     }
 
     // This is the preferred method to reobfuscate your jar file
-    finalizedBy 'reobfJar'
+    if (!usesRuntimeOfficialMappings) {
+        finalizedBy 'reobfJar'
+    }
 }
 
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing:
