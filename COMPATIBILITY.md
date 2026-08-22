@@ -12,5 +12,17 @@
 | Fabric | 1.20.5 | [`v1.0.1+mc1.20.5-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.20.5-fabric) |
 | Fabric | 1.20.6 | [`v1.0.1+mc1.20.6-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.20.6-fabric) |
 | Fabric | 1.21 | [`v1.0.1+mc1.21-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21-fabric) |
+| Fabric | 1.21.1 | [`v1.0.1+mc1.21.1-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.1-fabric) |
+| Fabric | 1.21.2 | [`v1.0.1+mc1.21.2-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.2-fabric) |
+| Fabric | 1.21.3 | [`v1.0.1+mc1.21.3-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.3-fabric) |
+| Fabric | 1.21.4 | [`v1.0.1+mc1.21.4-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.4-fabric) |
+| Fabric | 1.21.5 | [`v1.0.1+mc1.21.5-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.5-fabric) |
+| Fabric | 1.21.6 | [`v1.0.1+mc1.21.6-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.6-fabric) |
+| Fabric | 1.21.7 | [`v1.0.1+mc1.21.7-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.7-fabric) |
+| Fabric | 1.21.8 | [`v1.0.1+mc1.21.8-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.8-fabric) |
+| Fabric | 1.21.9 | [`v1.0.1+mc1.21.9-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.9-fabric) |
+| Fabric | 1.21.10 | [`v1.0.1+mc1.21.10-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.10-fabric) |
+| Fabric | 1.21.11 | [`v1.0.1+mc1.21.11-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.11-fabric) |
+| Fabric | 26.1 | [`v1.0.1+mc26.1-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc26.1-fabric) |
 
 Fabric 构建依赖 Fabric API。所有版本均只替换 `/tp`，不会注册 `/freetp` 或其他别名。

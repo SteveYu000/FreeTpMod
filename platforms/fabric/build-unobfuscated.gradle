@@ -1,0 +1,70 @@
+plugins {
+    id 'net.fabricmc.fabric-loom'
+    id 'maven-publish'
+}
+
+def targetPropertiesFile = file("versions/${target}.properties")
+if (!targetPropertiesFile.isFile()) {
+    throw new GradleException("Unknown Fabric target: ${target}")
+}
+
+def targetProperties = new Properties()
+targetPropertiesFile.withInputStream { targetProperties.load(it) }
+targetProperties.each { propertyName, propertyValue ->
+    project.ext.set(propertyName.toString(), propertyValue.toString())
+}
+
+sourceSets.main.java.setSrcDirs(['src/unobfuscated/java'])
+
+def releaseVersion = "${mod_version}+mc${minecraft_version}-fabric"
+
+version = releaseVersion
+group = mod_group
+
+base {
+    archivesName = mod_id
+}
+
+loom {
+    runs {
+        server {
+            runDir "run/${minecraft_version}"
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'minecraft_version', minecraft_version
+    inputs.property 'java_version', java_version
+
+    filesMatching('fabric.mod.json') {
+        expand(
+                version: project.version,
+                minecraft_version: minecraft_version,
+                java_version: java_version
+        )
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = Integer.parseInt(java_version)
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+}
+
+jar {
+    from(rootProject.file('../../LICENSE')) {
+        rename { "${it}_${mod_id}" }
+    }
+}
