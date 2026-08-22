@@ -62,8 +62,9 @@ public final class SelfTeleportCommand {
     private static int executeVanillaTeleport(ServerCommandSource source, String command) {
         VanillaCommandExecutor.execute(
                 source.getServer().getCommandManager(),
-                source.withLevel(TELEPORT_PERMISSION_LEVEL),
-                command
+                source,
+                command,
+                TELEPORT_PERMISSION_LEVEL
         );
         return 1;
     }

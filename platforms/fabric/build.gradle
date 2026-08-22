@@ -14,8 +14,10 @@ targetProperties.each { propertyName, propertyValue ->
     project.ext.set(propertyName.toString(), propertyValue.toString())
 }
 
-def modernCommandApi = ['1.21.10', '1.21.11'].contains(minecraft_version)
-sourceSets.main.java.srcDir("src/command-${modernCommandApi ? 'modern' : 'legacy'}/java")
+def commandApiSource = minecraft_version == '1.21.11'
+        ? 'permissions'
+        : (minecraft_version == '1.21.10' ? 'modern' : 'legacy')
+sourceSets.main.java.srcDir("src/command-${commandApiSource}/java")
 
 def releaseVersion = "${mod_version}+mc${minecraft_version}-fabric"
 
