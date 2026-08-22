@@ -17,6 +17,7 @@
 | NeoForge | 1.21.5 | [`v1.0.1+mc1.21.5-neoforge`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.5-neoforge) |
 | NeoForge | 1.21.6 | [`v1.0.1+mc1.21.6-neoforge`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.6-neoforge) |
 | NeoForge | 1.21.7 | [`v1.0.1+mc1.21.7-neoforge`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.7-neoforge) |
+| NeoForge | 1.21.8 | [`v1.0.1+mc1.21.8-neoforge`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.8-neoforge) |
 | Fabric | 1.20.1 | [`v1.0.1+mc1.20.1-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.20.1-fabric) |
 | Fabric | 1.20.2 | [`v1.0.1+mc1.20.2-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.20.2-fabric) |
 | Fabric | 1.20.3 | [`v1.0.1+mc1.20.3-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.20.3-fabric) |
