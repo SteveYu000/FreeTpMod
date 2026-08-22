@@ -18,6 +18,8 @@ targetProperties.each { propertyName, propertyValue ->
     project.ext.set(propertyName.toString(), propertyValue.toString())
 }
 
+layout.buildDirectory.set(file("build/forge/${minecraft_version}"))
+
 def releaseVersion = "${mod_version}+mc${minecraft_version}-${mod_loader}"
 
 version = releaseVersion
@@ -219,4 +221,14 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+if (Boolean.parseBoolean(project.findProperty('merge_source_outputs')?.toString() ?: 'false')) {
+    // Forge 49+ requires classes and resources to share one module directory
+    // for development runs to associate @Mod classes with META-INF/mods.toml.
+    sourceSets.each {
+        def mergedOutput = layout.buildDirectory.dir("sourceSets/${it.name}")
+        it.output.resourcesDir = mergedOutput
+        it.java.destinationDirectory = mergedOutput
+    }
 }

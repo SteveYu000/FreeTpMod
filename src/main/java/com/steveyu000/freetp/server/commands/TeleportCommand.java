@@ -64,7 +64,8 @@ public final class TeleportCommand {
 
 	private static int executeVanillaTeleport(CommandSourceStack source, String command) {
 		CommandSourceStack delegatedSource = source.withPermission(TELEPORT_PERMISSION_LEVEL);
-		return source.getServer().getCommands().performPrefixedCommand(delegatedSource, command);
+		source.getServer().getCommands().performPrefixedCommand(delegatedSource, command);
+		return 1;
 	}
 
 	private static String coordinate(double value) {
