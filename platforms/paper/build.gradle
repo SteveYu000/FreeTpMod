@@ -76,6 +76,12 @@ tasks.register('coordinateTest', JavaExec) {
     mainClass = 'com.steveyu000.freetp.paper.TeleportCoordinatesTest'
 }
 
+// Coordinate checks use a dependency-free main class rather than a test engine.
+// Gradle 9 fails an otherwise empty Test task when test sources are present.
+tasks.named('test') {
+    enabled = false
+}
+
 tasks.named('check') {
     dependsOn coordinateTest
 }
