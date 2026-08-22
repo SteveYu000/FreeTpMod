@@ -5,11 +5,11 @@ bin/
 out/
 
 # IDE metadata
-/.idea/
-/.vscode/
-/.settings/
-/.classpath
-/.project
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
 *.iml
 *.ipr
 *.iws
@@ -17,9 +17,11 @@ out/
 # Forge/Minecraft development runtime data
 run/
 runs/
+run-data/
 eclipse/
 logs/
 crash-reports/
+mcmodsrepo/
 
 # Java/JVM-generated files
 *.class

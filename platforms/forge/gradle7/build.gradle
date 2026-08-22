@@ -6,9 +6,9 @@ plugins {
     id 'net.minecraftforge.gradle' version '[7.0.3,8)'
 }
 
-def repositoryRoot = file('../../..').canonicalFile
+def forgeProjectRoot = file('..').canonicalFile
 def sharedProperties = new Properties()
-new File(repositoryRoot, 'gradle.properties').withInputStream {
+new File(forgeProjectRoot, 'gradle.properties').withInputStream {
     sharedProperties.load(it)
 }
 sharedProperties.each { propertyName, propertyValue ->
@@ -17,8 +17,8 @@ sharedProperties.each { propertyName, propertyValue ->
 
 def selectedTarget = providers.gradleProperty('target').getOrElse(default_target)
 def targetPropertiesFile = new File(
-        repositoryRoot,
-        "platforms/forge/versions/${selectedTarget}.properties"
+        forgeProjectRoot,
+        "versions/${selectedTarget}.properties"
 )
 if (!targetPropertiesFile.isFile()) {
     throw new GradleException("Unknown ForgeGradle 7 target: ${selectedTarget}")
@@ -28,7 +28,7 @@ def targetProperties = new Properties()
 targetPropertiesFile.withInputStream { targetProperties.load(it) }
 if (targetProperties.getProperty('forge_gradle_generation') != '7') {
     throw new GradleException(
-            "Forge target ${selectedTarget} does not use ForgeGradle 7; run the build from the repository root"
+            "Forge target ${selectedTarget} does not use ForgeGradle 7; run the build from platforms/forge"
     )
 }
 targetProperties.each { propertyName, propertyValue ->
@@ -49,10 +49,10 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(java_version)
 
 sourceSets {
     main {
-        java.setSrcDirs([new File(repositoryRoot, 'src/main/java')])
+        java.setSrcDirs([new File(forgeProjectRoot, 'src/main/java')])
         resources.setSrcDirs([
-                new File(repositoryRoot, 'src/main/resources'),
-                new File(repositoryRoot, 'src/generated/resources')
+                new File(forgeProjectRoot, 'src/main/resources'),
+                new File(forgeProjectRoot, 'src/generated/resources')
         ])
     }
 }
@@ -64,7 +64,7 @@ minecraft {
 
     runs {
         configureEach {
-            workingDir = new File(repositoryRoot, "run/forge/${minecraft_version}")
+            workingDir = new File(forgeProjectRoot, "run/${minecraft_version}")
             systemProperty 'forge.enabledGameTestNamespaces', mod_id
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             systemProperty 'forge.logging.console.level', 'debug'
@@ -79,10 +79,10 @@ minecraft {
         register('gameTestServer')
 
         register('data') {
-            workingDir = new File(repositoryRoot, "run-data/forge/${minecraft_version}")
+            workingDir = new File(forgeProjectRoot, "run-data/${minecraft_version}")
             args '--mod', mod_id, '--all',
-                    '--output', new File(repositoryRoot, 'src/generated/resources'),
-                    '--existing', new File(repositoryRoot, 'src/main/resources')
+                    '--output', new File(forgeProjectRoot, 'src/generated/resources'),
+                    '--existing', new File(forgeProjectRoot, 'src/main/resources')
         }
     }
 }
@@ -99,7 +99,7 @@ dependencies {
 }
 
 tasks.named('clean', Delete).configure {
-    delete new File(repositoryRoot, "build/forge/${minecraft_version}")
+    delete new File(forgeProjectRoot, "build/${minecraft_version}")
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -125,7 +125,7 @@ tasks.named('processResources', ProcessResources).configure {
 }
 
 tasks.named('jar', Jar).configure {
-    destinationDirectory = new File(repositoryRoot, "build/forge/${minecraft_version}/libs")
+    destinationDirectory = new File(forgeProjectRoot, "build/${minecraft_version}/libs")
 
     manifest {
         attributes([
@@ -148,7 +148,7 @@ publishing {
     }
     repositories {
         maven {
-            url "file://${repositoryRoot}/mcmodsrepo"
+            url "file://${forgeProjectRoot}/mcmodsrepo"
         }
     }
 }

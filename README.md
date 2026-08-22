@@ -19,3 +19,23 @@
 - `/tp <目标实体>`：将自己传送到目标实体。
 
 模组不会提供传送其他实体的命令分支，也不会注册其他命令别名。Fabric、Forge 和 NeoForge 版本遇到其他模组已修改 `/tp` 时会保留现有命令并报告冲突；Paper 版本不修改命令表，而是通过公共 Bukkit API 安全处理玩家输入的 `/tp`。
+
+## 项目结构
+
+各平台工程统一放在 `platforms` 目录中：
+
+- `platforms/fabric`
+- `platforms/forge`
+- `platforms/neoforge`
+- `platforms/paper`
+
+仓库根目录只作为跨平台入口，保留 `platforms`、文档和许可证，不再作为 Gradle 工程。Forge 可在其平台目录中构建：
+
+```powershell
+cd platforms/forge
+.\gradlew.bat -Ptarget=1.20.1 build
+cd gradle7
+.\gradlew.bat -Ptarget=1.20.6 build
+```
+
+Forge 构建产物位于 `platforms/forge/build/<Minecraft 版本>/libs`。
