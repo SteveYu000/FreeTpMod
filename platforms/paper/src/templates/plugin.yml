@@ -1,0 +1,7 @@
+name: FreeTP
+version: '${mod_version}'
+main: com.steveyu000.freetp.paper.FreeTpPaper
+description: '${mod_description}'
+author: SteveYu000
+website: https://github.com/SteveYu000/FreeTpMod
+api-version: '${api_version}'

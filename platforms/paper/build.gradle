@@ -1,0 +1,115 @@
+plugins {
+    id 'java'
+}
+
+def targetPropertiesFile = file("versions/${target}.properties")
+if (!targetPropertiesFile.isFile()) {
+    throw new GradleException("Unknown Paper target: ${target}")
+}
+
+def targetProperties = new Properties()
+targetPropertiesFile.withInputStream { targetProperties.load(it) }
+targetProperties.each { propertyName, propertyValue ->
+    project.ext.set(propertyName.toString(), propertyValue.toString())
+}
+
+def releaseVersion = "${mod_version}+mc${minecraft_version}-paper"
+
+version = releaseVersion
+group = mod_group
+
+base {
+    archivesName = mod_id
+}
+
+repositories {
+    maven {
+        name = 'PaperMC'
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly "io.papermc.paper:paper-api:${paper_api_version}"
+}
+
+def generatePluginMetadata = tasks.register('generatePluginMetadata', ProcessResources) {
+    def replaceProperties = [
+            api_version    : api_version,
+            mod_description: mod_description,
+            mod_version    : releaseVersion
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from 'src/templates'
+    into layout.buildDirectory.dir('generated/sources/pluginMetadata')
+}
+
+sourceSets.main.resources.srcDir generatePluginMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = Integer.parseInt(java_version)
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(
+            project.findProperty('toolchain_version') ?: java_version
+    )
+    withSourcesJar()
+}
+
+def archiveModId = mod_id.toString()
+
+jar {
+    from(rootProject.file('../../LICENSE')) {
+        rename { "${it}_${archiveModId}" }
+    }
+}
+
+tasks.register('coordinateTest', JavaExec) {
+    group = 'verification'
+    description = 'Runs the dependency-free coordinate parser checks.'
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.steveyu000.freetp.paper.TeleportCoordinatesTest'
+}
+
+tasks.named('check') {
+    dependsOn coordinateTest
+}
+
+tasks.register('verifyReleaseJar') {
+    group = 'verification'
+    description = 'Checks the release JAR metadata and forbidden command aliases/internals.'
+    dependsOn jar
+    doLast {
+        def jarFile = tasks.named('jar').get().archiveFile.get().asFile
+        def entries = zipTree(jarFile)
+        def pluginMetadata = entries.matching { include 'plugin.yml' }.singleFile.text
+        if (pluginMetadata.contains('commands:') || pluginMetadata.contains('freetp:')) {
+            throw new GradleException('Paper JAR must not register commands or aliases.')
+        }
+
+        def forbiddenSource = fileTree('src/main/java') {
+            include '**/*.java'
+        }.files.find { source ->
+            def text = source.text
+            text.contains('net.minecraft') || text.contains('org.bukkit.craftbukkit')
+        }
+        if (forbiddenSource != null) {
+            throw new GradleException("Paper source uses a forbidden server-internal API: ${forbiddenSource}")
+        }
+
+        if (!entries.matching {
+            include 'com/steveyu000/freetp/paper/TeleportCommand.class'
+        }.files) {
+            throw new GradleException('TeleportCommand.class is missing from the Paper JAR.')
+        }
+    }
+}
+
+tasks.named('check') {
+    dependsOn verifyReleaseJar
+}
