@@ -1,4 +1,17 @@
 pluginManagement {
+    def selectedTarget = providers.gradleProperty('target').getOrElse('1.20.1')
+    def targetPropertiesFile = file("versions/${selectedTarget}.properties")
+    if (!targetPropertiesFile.isFile()) {
+        throw new GradleException("Unknown Fabric target: ${selectedTarget}")
+    }
+
+    def targetProperties = new Properties()
+    targetPropertiesFile.withInputStream { targetProperties.load(it) }
+
+    plugins {
+        id 'fabric-loom' version targetProperties.getProperty('loom_version')
+    }
+
     repositories {
         maven {
             name = 'Fabric'

@@ -1,6 +1,17 @@
 plugins {
-    id 'fabric-loom' version "${loom_version}"
+    id 'fabric-loom'
     id 'maven-publish'
+}
+
+def targetPropertiesFile = file("versions/${target}.properties")
+if (!targetPropertiesFile.isFile()) {
+    throw new GradleException("Unknown Fabric target: ${target}")
+}
+
+def targetProperties = new Properties()
+targetPropertiesFile.withInputStream { targetProperties.load(it) }
+targetProperties.each { propertyName, propertyValue ->
+    project.ext.set(propertyName.toString(), propertyValue.toString())
 }
 
 def releaseVersion = "${mod_version}+mc${minecraft_version}-fabric"
@@ -10,6 +21,14 @@ group = mod_group
 
 base {
     archivesName = mod_id
+}
+
+loom {
+    runs {
+        server {
+            runDir "run/${minecraft_version}"
+        }
+    }
 }
 
 dependencies {
@@ -22,11 +41,13 @@ dependencies {
 processResources {
     inputs.property 'version', project.version
     inputs.property 'minecraft_version', minecraft_version
+    inputs.property 'java_version', java_version
 
     filesMatching('fabric.mod.json') {
         expand(
                 version: project.version,
-                minecraft_version: minecraft_version
+                minecraft_version: minecraft_version,
+                java_version: java_version
         )
     }
 }
