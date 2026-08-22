@@ -60,10 +60,11 @@ public final class SelfTeleportCommand {
     }
 
     private static int executeVanillaTeleport(ServerCommandSource source, String command) {
-        return source.getServer().getCommandManager().executeWithPrefix(
+        source.getServer().getCommandManager().executeWithPrefix(
                 source.withLevel(TELEPORT_PERMISSION_LEVEL),
                 command
         );
+        return 1;
     }
 
     private static String coordinate(double value) {
