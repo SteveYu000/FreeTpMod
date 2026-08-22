@@ -18,20 +18,20 @@ import java.math.BigDecimal;
  * Defines only self-teleport syntax and delegates the actual movement to the
  * server's existing vanilla teleport command.
  */
-public final class SelfTeleportCommand {
+public final class TeleportCommand {
     private static final String LOCATION_ARGUMENT = "location";
     private static final String DESTINATION_ARGUMENT = "destination";
 
-    private SelfTeleportCommand() {
+    private TeleportCommand() {
     }
 
     public static LiteralCommandNode<CommandSourceStack> createNode(String commandName) {
         return Commands.literal(commandName)
                 .requires(CommandSourceStack::isPlayer)
                 .then(Commands.argument(LOCATION_ARGUMENT, Vec3Argument.vec3())
-                        .executes(SelfTeleportCommand::teleportToPosition))
+                        .executes(TeleportCommand::teleportToPosition))
                 .then(Commands.argument(DESTINATION_ARGUMENT, EntityArgument.entity())
-                        .executes(SelfTeleportCommand::teleportToEntity))
+                        .executes(TeleportCommand::teleportToEntity))
                 .build();
     }
 

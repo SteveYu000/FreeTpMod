@@ -28,7 +28,7 @@ public final class FreeTpFabric implements ModInitializer {
     private static void replaceVanillaAlias(CommandDispatcher<CommandSourceStack> dispatcher) {
         RootCommandNode<CommandSourceStack> root = dispatcher.getRoot();
         LiteralCommandNode<CommandSourceStack> replacement =
-                SelfTeleportCommand.createNode(TELEPORT_ALIAS);
+                TeleportCommand.createNode(TELEPORT_ALIAS);
         CommandNode<CommandSourceStack> currentAlias = root.getChild(TELEPORT_ALIAS);
 
         if (currentAlias == null) {

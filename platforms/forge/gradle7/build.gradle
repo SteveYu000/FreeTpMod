@@ -1,0 +1,153 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+}
+
+def repositoryRoot = file('../../..').canonicalFile
+def sharedProperties = new Properties()
+new File(repositoryRoot, 'gradle.properties').withInputStream {
+    sharedProperties.load(it)
+}
+sharedProperties.each { propertyName, propertyValue ->
+    project.ext.set(propertyName.toString(), propertyValue.toString())
+}
+
+def selectedTarget = providers.gradleProperty('target').getOrElse(default_target)
+def targetPropertiesFile = new File(
+        repositoryRoot,
+        "platforms/forge/versions/${selectedTarget}.properties"
+)
+if (!targetPropertiesFile.isFile()) {
+    throw new GradleException("Unknown ForgeGradle 7 target: ${selectedTarget}")
+}
+
+def targetProperties = new Properties()
+targetPropertiesFile.withInputStream { targetProperties.load(it) }
+targetProperties.each { propertyName, propertyValue ->
+    project.ext.set(propertyName.toString(), propertyValue.toString())
+}
+
+def releaseVersion = "${mod_version}+mc${minecraft_version}-${mod_loader}"
+def implementationTitle = project.name
+
+version = releaseVersion
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+
+sourceSets {
+    main {
+        java.setSrcDirs([new File(repositoryRoot, 'src/main/java')])
+        resources.setSrcDirs([
+                new File(repositoryRoot, 'src/main/resources'),
+                new File(repositoryRoot, 'src/generated/resources')
+        ])
+    }
+}
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    runs {
+        configureEach {
+            workingDir = new File(repositoryRoot, "run/forge/${minecraft_version}")
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            systemProperty 'forge.logging.console.level', 'debug'
+        }
+
+        register('client')
+
+        register('server') {
+            args '--nogui'
+        }
+
+        register('gameTestServer')
+
+        register('data') {
+            workingDir = new File(repositoryRoot, "run-data/forge/${minecraft_version}")
+            args '--mod', mod_id, '--all',
+                    '--output', new File(repositoryRoot, 'src/generated/resources'),
+                    '--existing', new File(repositoryRoot, 'src/main/resources')
+        }
+    }
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+dependencies {
+    implementation minecraft.dependency("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+}
+
+tasks.named('clean', Delete).configure {
+    delete new File(repositoryRoot, "build/forge/${minecraft_version}")
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+            minecraft_version: minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version,
+            forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            pack_format: pack_format,
+            mod_id: mod_id,
+            mod_name: mod_name,
+            mod_license: mod_license,
+            mod_version: project.version,
+            mod_authors: mod_authors,
+            mod_description: mod_description,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    destinationDirectory = new File(repositoryRoot, "build/forge/${minecraft_version}/libs")
+
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : implementationTitle,
+                'Implementation-Version'  : releaseVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file://${repositoryRoot}/mcmodsrepo"
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
