@@ -1,8 +1,8 @@
 # Gradle caches and build outputs
-/.gradle/
-/build/
-/bin/
-/out/
+.gradle/
+build/
+bin/
+out/
 
 # IDE metadata
 /.idea/
@@ -15,11 +15,11 @@
 *.iws
 
 # Forge/Minecraft development runtime data
-/run/
-/runs/
-/eclipse/
-/logs/
-/crash-reports/
+run/
+runs/
+eclipse/
+logs/
+crash-reports/
 
 # Java/JVM-generated files
 *.class

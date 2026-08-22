@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "ftp_mod",
+  "version": "${version}",
+  "name": "Free TP",
+  "description": "Everyone can teleport freely, not just operators.",
+  "authors": [
+    "SteveYu000"
+  ],
+  "contact": {
+    "sources": "https://github.com/SteveYu000/FreeTpMod",
+    "issues": "https://github.com/SteveYu000/FreeTpMod/issues"
+  },
+  "license": "GPL-3.0-only",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.steveyu000.freetp.fabric.FreeTpFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.22",
+    "minecraft": "${minecraft_version}",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
