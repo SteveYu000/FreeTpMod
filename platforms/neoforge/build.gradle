@@ -1,0 +1,94 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev'
+}
+
+def targetPropertiesFile = file("versions/${target}.properties")
+if (!targetPropertiesFile.isFile()) {
+    throw new GradleException("Unknown NeoForge target: ${target}")
+}
+
+def targetProperties = new Properties()
+targetPropertiesFile.withInputStream { targetProperties.load(it) }
+targetProperties.each { propertyName, propertyValue ->
+    project.ext.set(propertyName.toString(), propertyValue.toString())
+}
+
+def releaseVersion = "${mod_version}+mc${minecraft_version}-neoforge"
+
+version = releaseVersion
+group = mod_group
+
+base {
+    archivesName = mod_id
+}
+
+sourceSets.main.java.srcDir("src/command-${command_api}/java")
+
+neoForge {
+    version = neo_version
+
+    if (project.hasProperty('parchment_minecraft_version')) {
+        parchment {
+            minecraftVersion = parchment_minecraft_version
+            mappingsVersion = parchment_mappings_version
+        }
+    }
+
+    runs {
+        server {
+            server()
+            gameDirectory = file("run/${minecraft_version}")
+            programArgument '--nogui'
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+def metadataDirectory = metadata_format == 'legacy'
+        ? 'src/templates-legacy'
+        : 'src/templates-modern'
+
+def generateModMetadata = tasks.register('generateModMetadata', ProcessResources) {
+    def replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            neo_version            : neo_version,
+            loader_version_range   : project.findProperty('loader_version_range') ?: '',
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : releaseVersion,
+            mod_description        : mod_description
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from metadataDirectory
+    into layout.buildDirectory.dir('generated/sources/modMetadata')
+}
+
+sourceSets.main.resources.srcDir generateModMetadata
+neoForge.ideSyncTask generateModMetadata
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = Integer.parseInt(java_version)
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+}
+
+def archiveModId = mod_id.toString()
+
+jar {
+    from(rootProject.file('../../LICENSE')) {
+        rename { "${it}_${archiveModId}" }
+    }
+}
