@@ -25,5 +25,6 @@
 | Fabric | 1.21.11 | [`v1.0.1+mc1.21.11-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc1.21.11-fabric) |
 | Fabric | 26.1 | [`v1.0.1+mc26.1-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc26.1-fabric) |
 | Fabric | 26.1.1 | [`v1.0.1+mc26.1.1-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc26.1.1-fabric) |
+| Fabric | 26.1.2 | [`v1.0.1+mc26.1.2-fabric`](https://github.com/SteveYu000/FreeTpMod/releases/tag/v1.0.1%2Bmc26.1.2-fabric) |
 
 Fabric 构建依赖 Fabric API。所有版本均只替换 `/tp`，不会注册 `/freetp` 或其他别名。
